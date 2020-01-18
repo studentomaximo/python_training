@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from selenium import webdriver
-from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 import unittest
@@ -15,6 +14,7 @@ class TestAddContact(unittest.TestCase):
         wd.get("http://localhost:8080/addressbook/")
 
     def login(self, wd, username, password):
+        self.open_home_page(wd)
         wd.find_element_by_name("user").click()
         wd.find_element_by_name("user").clear()
         wd.find_element_by_name("user").send_keys(username)
@@ -28,6 +28,7 @@ class TestAddContact(unittest.TestCase):
 
     def create_contact(self, wd, contact):
         # fill contact form
+        self.open_contacts_page(wd)
         wd.find_element_by_name("firstname").click()
         wd.find_element_by_name("firstname").clear()
         wd.find_element_by_name("firstname").send_keys(contact.first_name)
@@ -81,6 +82,7 @@ class TestAddContact(unittest.TestCase):
         wd.find_element_by_name("notes").send_keys(contact.notes)
         # submit contact creation
         wd.find_element_by_xpath("(//input[@name='submit'])[2]").click()
+        self.return_to_contacts_page(wd)
 
     def return_to_contacts_page(self, wd):
         wd.find_element_by_link_text("home page").click()
@@ -90,26 +92,20 @@ class TestAddContact(unittest.TestCase):
     
     def test_add_contact(self):
         wd = self.wd
-        self.open_home_page(wd)
         self.login(wd, username="admin", password="secret")
-        self.open_contacts_page(wd)
         self.create_contact(wd, Contact(first_name="Maximum", middle_name="ab", last_name="Kane", nick="Strabo", title="SQA",
                             company="Faceboof", address="234 Hacker Dr", home_phone="321", mobile_phone="312",
                             work_phone="999", fax="006", email="e1@gmai.com", email2="e2@gmail.com", email3="e3@gmail.com",
                             home_page="NA", address2="12345 Wed Dr", notes="NA"))
-        self.return_to_contacts_page(wd)
         self.logout(wd)
 
     def test_add_empty_contact(self):
         wd = self.wd
-        self.open_home_page(wd)
         self.login(wd, username="admin", password="secret")
-        self.open_contacts_page(wd)
         self.create_contact(wd, Contact(first_name="", middle_name="", last_name="", nick="", title="",
                             company="", address="", home_phone="", mobile_phone="",
                             work_phone="", fax="", email="", email2="", email3="",
                             home_page="", address2="", notes=""))
-        self.return_to_contacts_page(wd)
         self.logout(wd)
 
     def is_element_present(self, how, what):
