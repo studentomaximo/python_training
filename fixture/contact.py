@@ -5,15 +5,19 @@ class ContactHelper:
 
     def open_contacts_page(self):
         wd = self.app.wd
-        wd.find_element_by_link_text("add new").click()
+        if not (wd.current_url.endswith("addressbook/") and
+                len(wd.find_elements_by_xpath("/html/body/div[1]/div[4]/form[2]/table/tbody/tr[1]/th[2]/a")) > 0):
+            wd.find_element_by_link_text("home").click()
 
     def create(self, contact):
         wd = self.app.wd
         self.open_contacts_page()
+        # init contact creation
+        wd.find_element_by_xpath("//div[@id='nav']/ul/li[2]/a").click()
+        # fill contact form
         self.fill_contact_form(contact)
-        # submit contact creation
+        # submit contact form
         wd.find_element_by_xpath("(//input[@name='submit'])[2]").click()
-        self.return_to_contacts_page()
 
     def fill_contact_form(self, contact):
         wd = self.app.wd
@@ -45,8 +49,8 @@ class ContactHelper:
     def delete_first_contact(self):
         wd = self.app.wd
         self.select_first_contact()
-        # submit deletion
-        wd.find_element_by_xpath("//input[@value='Delete']").click()
+        wd.find_element_by_xpath("/html/body/div[1]/div[4]/form[2]/table/tbody/tr[2]/td[1]").click()
+        wd.find_element_by_xpath("/html/body/div[1]/div[4]/form[2]/div[2]/input").click()
         wd.switch_to_alert().accept()
 
     def select_first_contact(self):
