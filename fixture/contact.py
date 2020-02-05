@@ -49,7 +49,6 @@ class ContactHelper:
     def delete_first_contact(self):
         wd = self.app.wd
         self.select_first_contact()
-        wd.find_element_by_xpath("/html/body/div[1]/div[4]/form[2]/table/tbody/tr[2]/td[1]").click()
         wd.find_element_by_xpath("/html/body/div[1]/div[4]/form[2]/div[2]/input").click()
         wd.switch_to_alert().accept()
 
